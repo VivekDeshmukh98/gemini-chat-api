@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Project1.ChatApi.Application.DTOs;
-using Project1.ChatApi.Application.Interfaces;
+using Project1.ChatApi.Features.Chat;
+using Project1.ChatApi.Features.Dtos;
 
-namespace Project1.ChatApi.Presentation.Controllers
+namespace Project1.ChatApi.Features.Chat.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

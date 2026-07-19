@@ -1,6 +1,6 @@
 ﻿using System.Xml;
 
-namespace Project1.ChatApi.Domain
+namespace Project1.ChatApi.Features.Chat
 {
     //Domain entity representing a single message in a chat conversation.
     public class ChatMessage

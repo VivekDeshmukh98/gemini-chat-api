@@ -1,5 +1,5 @@
-﻿using Project1.ChatApi.Tests.Fixtures;
-using Project1.ChatApi.Infrastructure.AI;
+﻿using Project1.ChatApi.Features.Chat.Services;
+using Project1.ChatApi.Tests.Fixtures;
 using Xunit;
 
 namespace Project1.ChatApi.Tests.Services

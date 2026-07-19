@@ -1,6 +1,6 @@
 ﻿using System.Security.Principal;
 
-namespace Project1.ChatApi.Application.DTOs
+namespace Project1.ChatApi.Features.Dtos
 {
     /// <summary>
     /// Request sent by the user to the chat API.

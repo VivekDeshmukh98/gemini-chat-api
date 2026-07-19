@@ -1,6 +1,4 @@
-﻿using Project1.ChatApi.Domain;
-
-namespace Project1.ChatApi.Application.Interfaces
+﻿namespace Project1.ChatApi.Features.Chat
 {
     //Contract for chat operations.
     public interface IChatService

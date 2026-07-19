@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 using Moq;
-using Project1.ChatApi.Infrastructure.AI;
+using Project1.ChatApi.Features.Chat.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;

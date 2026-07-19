@@ -1,4 +1,4 @@
-﻿namespace Project1.ChatApi.Application.DTOs
+﻿namespace Project1.ChatApi.Features.Dtos
 {
     /// <summary>
     /// Response returned by the chat API.

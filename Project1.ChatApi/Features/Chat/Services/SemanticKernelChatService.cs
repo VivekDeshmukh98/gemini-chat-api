@@ -1,17 +1,17 @@
 ﻿using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.Extensions.Logging;
-using Project1.ChatApi.Application.Interfaces;
-using Project1.ChatApi.Domain;
+// NEW:
+using Project1.ChatApi.Features.Chat;
 
-namespace Project1.ChatApi.Infrastructure.AI
+namespace Project1.ChatApi.Features.Chat.Services
 {
     public class SemanticKernelChatService : IChatService
     {
         private readonly Kernel _kernel;
         private readonly ILogger<SemanticKernelChatService> _logger;
 
-        private static readonly Dictionary<string, List<Domain.ChatMessage>> ChatSessions = new();
+        private static readonly Dictionary<string, List<ChatMessage>> ChatSessions = new();
 
         public SemanticKernelChatService(Kernel kernel, ILogger<SemanticKernelChatService> logger)
         {
@@ -19,7 +19,7 @@ namespace Project1.ChatApi.Infrastructure.AI
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<Domain.ChatMessage> SendChatMessageAsync(
+        public async Task<ChatMessage> SendChatMessageAsync(
             string userMessage,
             string chatSessionId,
             CancellationToken cancellationToken = default)
@@ -37,10 +37,10 @@ namespace Project1.ChatApi.Infrastructure.AI
             {
                 if (!ChatSessions.ContainsKey(sessionId))
                 {
-                    ChatSessions[sessionId] = new List<Domain.ChatMessage>();
+                    ChatSessions[sessionId] = new List<ChatMessage>();
                 }
 
-                var userChatMessage = new Domain.ChatMessage
+                var userChatMessage = new ChatMessage
                 {
                     Id = Guid.NewGuid().ToString(),
                     Role = "user",
@@ -93,7 +93,7 @@ namespace Project1.ChatApi.Infrastructure.AI
                     sessionId,
                     assistantResponseText.Length);
 
-                var assistantMessage = new Domain.ChatMessage
+                var assistantMessage = new ChatMessage
                 {
                     Id = Guid.NewGuid().ToString(),
                     Role = "assistant",
@@ -117,7 +117,7 @@ namespace Project1.ChatApi.Infrastructure.AI
             }
         }
 
-        public async Task<IEnumerable<Domain.ChatMessage>> GetChatHistoryAsync(string chatSessionId)
+        public async Task<IEnumerable<ChatMessage>> GetChatHistoryAsync(string chatSessionId)
         {
             if (string.IsNullOrEmpty(chatSessionId))
             {
@@ -127,7 +127,7 @@ namespace Project1.ChatApi.Infrastructure.AI
             return await Task.FromResult(
                 ChatSessions.ContainsKey(chatSessionId)
                     ? ChatSessions[chatSessionId].AsReadOnly()
-                    : Enumerable.Empty<Domain.ChatMessage>());
+                    : Enumerable.Empty<ChatMessage>());
         }
 
         public async Task ClearChatHistoryAsync(string chatSessionId)

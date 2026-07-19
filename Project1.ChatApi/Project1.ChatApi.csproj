@@ -19,4 +19,11 @@
 
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Application\DTOs\" />
+	  <Folder Include="Application\Interfaces\" />
+	  <Folder Include="Domain\" />
+	  <Folder Include="Infrastructure\AI\" />
+	  <Folder Include="Presentation\Controllers\" />
+	</ItemGroup>
 </Project>

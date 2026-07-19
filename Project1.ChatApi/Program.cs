@@ -1,5 +1,5 @@
-using Project1.ChatApi.Application.Interfaces;
-using Project1.ChatApi.Infrastructure.AI;
+using Project1.ChatApi.Features.Chat;
+using Project1.ChatApi.Features.Chat.Services;
 using Project1.ChatApi.Infrastructure.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
