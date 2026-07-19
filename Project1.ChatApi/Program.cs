@@ -1,5 +1,7 @@
 using Project1.ChatApi.Features.Chat;
 using Project1.ChatApi.Features.Chat.Services;
+using Project1.ChatApi.Features.Email;
+using Project1.ChatApi.Features.Email.Services;
 using Project1.ChatApi.Infrastructure.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +23,8 @@ builder.Services.AddSemanticKernelWithGemini(builder.Configuration);
 // When something asks for IChatService, give them SemanticKernelChatService
 // This follows the Dependency Inversion principle (SOLID)
 builder.Services.AddScoped<IChatService, SemanticKernelChatService>();
+// Add this line with your other registrations:
+builder.Services.AddScoped<IEmailGeneratorService, SemanticKernelEmailService>();
 
 // 3. Add standard ASP.NET Core services
 builder.Services.AddControllers();
