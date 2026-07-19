@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Project1.ChatApi.Features.Chat;
-using Project1.ChatApi.Features.Dtos;
+using Project1.ChatApi.Features.Chat.Dtos;
 
 namespace Project1.ChatApi.Features.Chat.Controllers
 {
