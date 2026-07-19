@@ -1,564 +1,232 @@
-# Project 1: AI Chat API
+# AI-Learning-Lab
 
-## 🎯 Overview
+A multi-project .NET 8 solution demonstrating AI-powered workflows, including a chat API and Semantic Kernel based services for email generation and conversational agents.
 
-A **production-ready ASP.NET Core 8 Web API** that provides real-time chat capabilities powered by **Google Gemini AI** via **Semantic Kernel**.
-
-This project demonstrates:
-- ✅ **Clean Architecture** (Domain, Application, Infrastructure, Presentation layers)
-- ✅ **SOLID Principles** (Dependency Inversion, Single Responsibility)
-- ✅ **Semantic Kernel** orchestration for AI integration
-- ✅ **Provider-agnostic design** (swap Gemini → OpenAI in configuration only)
-- ✅ **Production-ready** error handling, logging, validation
-- ✅ **Conversation context** management (multi-turn conversations)
-- ✅ **Comprehensive unit tests** (11 tests, 100% core service coverage)
+This README gives an overview of the repository, how to configure and run the projects locally, and notes about the architecture and contribution guidelines.
 
 ---
 
-## 🏗️ Architecture
+## Contents
 
-### Layer Structure
-
-```
-Project1.ChatApi/
-├── Domain/
-│   └── ChatMessage.cs                    # ✓ Core business entity
-│
-├── Application/
-│   ├── Interfaces/
-│   │   └── IChatService.cs               # ✓ Contract (what, not how)
-│   ├── DTOs/
-│   │   ├── ChatRequest.cs                # ✓ API input model
-│   │   ├── ChatResponse.cs               # ✓ API output model
-│   │   └── ChatHistoryResponse.cs        # ✓ History model
-│   └── Services/
-│
-├── Infrastructure/
-│   ├── AI/
-│   │   └── SemanticKernelChatService.cs  # ✓ Gemini implementation
-│   └── Configuration/
-│       └── SemanticKernelConfiguration.cs # ✓ DI & Kernel setup
-│
-├── Presentation/
-│   ├── Controllers/
-│   │   └── ChatController.cs             # ✓ REST API endpoints
-│   └── Models/
-│
-├── Program.cs                             # ✓ Startup & DI configuration
-├── appsettings.json                      # ✓ Public configuration
-└── appsettings.Development.json          # ✓ Local secrets (gitignored)
-```
-
-### Layer Responsibilities
-
-| Layer | Responsibility | Example |
-|-------|---|---|
-| **Domain** | Pure business logic, NO external dependencies | `ChatMessage` entity class |
-| **Application** | Use cases, interfaces, DTOs | `IChatService` interface, request/response models |
-| **Infrastructure** | External service implementations | `SemanticKernelChatService` calls Google Gemini API |
-| **Presentation** | API endpoints, HTTP concerns | `ChatController` REST endpoints with validation |
-
-### Why This Architecture?
-
-- **Testability** - Easy to mock infrastructure layer
-- **Maintainability** - Clear separation of concerns
-- **Scalability** - Projects 2-7 reuse these patterns
-- **Flexibility** - Swap Gemini for OpenAI without changing business logic
+- Project1.ChatApi — ASP.NET Core Web API providing chat and email-generation endpoints
+- (Other projects) — add additional project descriptions here if present
 
 ---
 
-## 🚀 Getting Started
+## Key Features
 
-### Prerequisites
+- Provider-agnostic AI integration using Semantic Kernel
+- Example service for email generation (SemanticKernelEmailService)
+- Clean, testable architecture (separation of Application, Infrastructure, Presentation)
+- Configuration-driven secrets and provider settings
 
-- **.NET 8 SDK** - [Download](https://dotnet.microsoft.com/download/dotnet/8.0)
-- **Google Gemini API Key** - [Get Free Key](https://ai.google.dev)
+---
 
-### Setup Instructions
+## Prerequisites
 
-#### 1️⃣ Clone & Navigate
+- .NET 8 SDK (download from https://dotnet.microsoft.com)
+- An LLM provider account and API key (OpenAI, Google Gemini, or another provider)
+- Recommended: Visual Studio 2022/2026, Visual Studio Code, or your preferred editor
+
+---
+
+## Setup & Configuration
+
+1. Clone the repository
+
+   ```bash
+   git clone https://github.com/VivekDeshmukh98/gemini-chat-api.git
+   cd AI-Learning-Lab
+   ```
+
+2. Restore and build
+
+   ```bash
+   dotnet restore
+   dotnet build
+   ```
+
+3. Configure secrets and provider credentials
+
+   The projects expect keys and endpoints for your LLM provider. Configure them via one of the following methods:
+
+   - dotnet user-secrets (recommended for development)
+   - environment variables
+   - appsettings.Development.json (local only, not recommended for committed files)
+
+   Example user-secrets keys (adjust to your actual configuration keys used in the project):
+
+   ```bash
+   dotnet user-secrets init
+   dotnet user-secrets set "LLM:ApiKey" "<your-api-key>"
+   dotnet user-secrets set "LLM:Endpoint" "<optional-endpoint>"
+   ```
+
+   Or set environment variables (PowerShell):
+
+   ```powershell
+   $env:LLM__ApiKey = "<your-api-key>"
+   ```
+
+4. Update appsettings.json or project configuration if you use different keys or providers.
+
+---
+
+## Running the API
+
+From the solution root run the primary API project:
 
 ```bash
-git clone <your-repo-url>
-cd AI-Learning-Lab/Project1.ChatApi
+dotnet run --project Project1.ChatApi
 ```
 
-#### 2️⃣ Configure API Key (Secure)
-
-**Option A: User Secrets (Recommended for Development)**
-
-```bash
-# Initialize User Secrets for this project
-dotnet user-secrets init
-
-# Set your Gemini API key securely
-dotnet user-secrets set "GoogleAI:ApiKey" "your-api-key-here"
-
-# Verify it's set
-dotnet user-secrets list
-```
-
-Benefits:
-- ✅ Secrets stored outside your project directory
-- ✅ Can't accidentally commit secrets
-- ✅ Automatically merged into configuration during development
-
-**Option B: Environment Variables**
-
-```bash
-# Windows PowerShell
-$env:GoogleAI__ApiKey="your-api-key-here"
-
-# Linux/Mac Bash
-export GoogleAI__ApiKey="your-api-key-here"
-```
-
-**Option C: appsettings.Development.json** (Less secure - local only)
-
-Create `appsettings.Development.json`:
-```json
-{
-  "GoogleAI": {
-    "ApiKey": "your-api-key-here"
-  }
-}
-```
-
-⚠️ **Add to .gitignore** to prevent accidental commits
-
-#### 3️⃣ Run the Application
-
-```bash
-dotnet run
-
-# Expected output:
-# Now listening on: https://localhost:7236
-# Now listening on: http://localhost:5193
-# Application started. Press Ctrl+C to shut down.
-```
-
-#### 4️⃣ Test via Swagger UI
-
-Open in browser: **https://localhost:7236/swagger/index.html**
-
-You'll see interactive API documentation where you can test endpoints.
+Open the Swagger UI (if enabled) or hit the exposed endpoints with curl/Postman. Check the project's launch settings for exact URLs and ports.
 
 ---
 
-## 📚 API Endpoints
+## Testing
 
-### 1. Send Chat Message
-
-**Endpoint:** `POST /api/chat/send`
-
-**Description:** Send a message and get AI response with conversation context
-
-**Request Body:**
-```json
-{
-  "message": "Explain machine learning in detail",
-  "chatSessionId": null
-}
-```
-
-**Parameters:**
-- `message` (required): Your message to the AI
-- `chatSessionId` (optional): Existing session ID. If null, creates new session.
-
-**Response (200 OK):**
-```json
-{
-  "chatSessionId": "550e8400-e29b-41d4-a716-446655440000",
-  "userMessage": "Explain machine learning in detail",
-  "assistantMessage": "Machine learning is a branch of AI that...",
-  "timestamp": "2026-07-18T13:40:00Z"
-}
-```
-
-**Error Response (400 Bad Request):**
-```json
-{
-  "error": "Message cannot be empty"
-}
-```
-
-**Error Response (503 Service Unavailable):**
-```json
-{
-  "error": "AI service is unavailable. Please try again later."
-}
-```
-
----
-
-### 2. Get Chat History
-
-**Endpoint:** `GET /api/chat/history/{chatSessionId}`
-
-**Description:** Retrieve all messages from a conversation session
-
-**URL Parameters:**
-- `chatSessionId` (required): The session ID to retrieve history for
-
-**Response (200 OK):**
-```json
-{
-  "chatSessionId": "550e8400-e29b-41d4-a716-446655440000",
-  "messages": [
-    {
-      "id": "msg-001",
-      "role": "user",
-      "content": "What is machine learning?",
-      "createdAt": "2026-07-18T13:40:00Z"
-    },
-    {
-      "id": "msg-002",
-      "role": "assistant",
-      "content": "Machine learning is a subset of AI that...",
-      "createdAt": "2026-07-18T13:40:10Z"
-    },
-    {
-      "id": "msg-003",
-      "role": "user",
-      "content": "Tell me more about supervised learning",
-      "createdAt": "2026-07-18T13:41:00Z"
-    },
-    {
-      "id": "msg-004",
-      "role": "assistant",
-      "content": "Supervised learning is a type of machine learning where...",
-      "createdAt": "2026-07-18T13:41:15Z"
-    }
-  ]
-}
-```
-
-**Error Response (404 Not Found):**
-```json
-{
-  "error": "Chat session not found"
-}
-```
-
----
-
-### 3. Clear Chat History
-
-**Endpoint:** `DELETE /api/chat/clear/{chatSessionId}`
-
-**Description:** Delete all messages from a conversation session
-
-**URL Parameters:**
-- `chatSessionId` (required): The session ID to clear
-
-**Response (204 No Content)**
-
-No response body - just confirms deletion.
-
----
-
-## 🧪 Testing
-
-### Run All Tests
+If this solution contains test projects, run them with:
 
 ```bash
-cd Project1.ChatApi.Tests
-
-# Run tests with summary
 dotnet test
-
-# Run with detailed output
-dotnet test -v d
-
-# Run specific test
-dotnet test --filter "ClassName=SemanticKernelChatServiceTests"
 ```
 
-### Test Coverage
-
-**11 Unit Tests:**
-
-| Category | Tests | What It Tests |
-|----------|-------|---|
-| **Constructor** | 2 | Dependency injection validation |
-| **SendMessage** | 4 | Input validation, error handling, session creation |
-| **GetHistory** | 2 | Query validation, empty results |
-| **ClearHistory** | 2 | Clear operation, validation |
-| **Integration** | 1 | Service initialization |
-
-### Expected Output
-
-```
-Test Run Successful.
-Total tests: 11
-     Passed: 11
-     Failed: 0
-```
+Use Visual Studio Test Explorer for interactive test running and debugging.
 
 ---
 
-## 🔄 How It Works
+## Project layout (high level)
 
-### Conversation Flow
+- Project1.ChatApi/
+  - Features/
+    - Email/
+      - Services/SemanticKernelEmailService.cs — orchestrates Semantic Kernel prompts and calls to LLMs to produce email content
+  - Controllers/ — API controllers and endpoints
+  - Program.cs, appsettings.json — application boot and configuration
 
-```
-User sends: "What is AI?"
-    ↓
-[ChatController] validates HTTP request
-    ↓
-[IChatService.SendMessageAsync] processes business logic
-    ↓
-[SemanticKernelChatService] calls Gemini
-    ↓
-[Semantic Kernel] orchestrates the call
-    ↓
-[Google Gemini API] generates response
-    ↓
-Response flows back up through layers
-    ↓
-Returns JSON to user: { assistantMessage: "AI is...", chatSessionId: "..." }
-```
-
-### Context Management
-
-The service maintains **conversation memory** by:
-
-1. **Storing all messages** in a static dictionary (keyed by `chatSessionId`)
-2. **Building complete history** before each Gemini call
-3. **Passing full context** to Gemini (all previous messages)
-4. **Enabling multi-turn conversations** (follow-up questions understand context)
-
-**Example:**
-
-```
-Turn 1:
-  User: "What is machine learning?"
-  Gemini sees: [System prompt] + [User: "What is machine learning?"]
-  Response: "Machine learning is a subset of AI..."
-
-Turn 2:
-  User: "Give me an example"
-  Gemini sees: [System prompt] + [Turn 1 exchange] + [User: "Give me an example"]
-  Response: "For example, email spam filters use ML..." 
-  ✓ Knows context from Turn 1!
-```
+Adjust the structure description to match additional projects in this repo as needed.
 
 ---
 
-## 🔧 Configuration
+## Folder structure (detailed)
 
-### appsettings.json
+Below is a suggested folder layout and files an interviewer would expect to see. Paths are relative to the Project1.ChatApi project root.
 
-```json
-{
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    }
-  },
-  "AllowedHosts": "*",
-  "GoogleAI": {
-    "ApiKey": ""  // Set via User Secrets or environment variables
-  }
-}
-```
+- /Presentation
+  - /Controllers — API controllers (e.g., ChatController.cs, EmailController.cs)
+  - /Models — request/response models used by controllers
+- /Application
+  - /Interfaces — application-level contracts (e.g., IChatService, IEmailService)
+  - /DTOs — data transfer objects used across layers
+  - /Services — use-case services that implement business logic orchestration
+- /Domain
+  - Entities and value objects (e.g., ChatMessage.cs, EmailDraft.cs)
+- /Infrastructure
+  - /AI — implementations that call Semantic Kernel or LLM providers (SemanticKernelEmailService.cs, SemanticKernelChatService.cs)
+  - /Persistence — data stores or in-memory repositories for chat history
+  - /Configuration — DI registration and kernel/provider setup
+- /Tests
+  - Unit and integration tests (Project1.ChatApi.Tests)
+- Program.cs, appsettings.json, appsettings.Development.json, launchSettings.json
 
-### Switching AI Providers
-
-**To use OpenAI instead of Gemini:**
-
-1. **Update `SemanticKernelConfiguration.cs`:**
-
-```csharp
-// Remove
-.AddGoogleAIGeminiChatCompletion(...)
-
-// Add
-.AddOpenAIChatCompletion(
-    modelId: "gpt-4o-mini",
-    apiKey: configuration["OpenAI:ApiKey"])
-```
-
-2. **Update `appsettings.json`:**
-
-```json
-{
-  "OpenAI": {
-    "ApiKey": "your-openai-key"
-  }
-}
-```
-
-**That's it!** The rest of your code works unchanged. This is the power of dependency inversion.
+Place prompt templates, resource files, and sample data under a /Resources or /Templates folder so reviewers can quickly inspect prompt engineering.
 
 ---
 
-## 🛠️ Development
+## Quick review guide — what to look for
 
-### Adding a New Feature
+When exploring this repository, the sections below will help you quickly understand the design, components, and how to run or extend the project.
 
-**Example: Add sentiment analysis**
+- Architecture & layering
+  - Confirm the separation between Presentation, Application, Infrastructure, and Domain layers. This improves maintainability and testability.
 
-1. **Update Domain** (`Domain/ChatMessage.cs`):
-```csharp
-public string Sentiment { get; set; }  // "positive", "negative", "neutral"
-```
+- Dependency injection & configuration
+  - Inspect Program.cs and DI registration code to see how interfaces map to implementations and how configuration (appsettings/user-secrets) is used.
 
-2. **Update Interface** (`Application/Interfaces/IChatService.cs`):
-```csharp
-Task<string> AnalyzeSentimentAsync(string message);
-```
+- Semantic Kernel & LLM provider integration
+  - Check Infrastructure/AI for Semantic Kernel setup and LLM client usage. Providers and keys should be abstracted and read from configuration.
 
-3. **Implement** (`Infrastructure/AI/SemanticKernelChatService.cs`):
-```csharp
-public async Task<string> AnalyzeSentimentAsync(string message)
-{
-    // Your implementation
-}
-```
+- Prompt templates & resources
+  - Look for a Templates or Resources folder containing prompt templates, examples, and any sample data used for prompt engineering.
 
-4. **Add API Endpoint** (`Presentation/Controllers/ChatController.cs`):
-```csharp
-[HttpPost("analyze-sentiment")]
-public async Task<IActionResult> AnalyzeSentiment([FromBody] string message)
-{
-    var sentiment = await _chatService.AnalyzeSentimentAsync(message);
-    return Ok(new { sentiment });
-}
-```
+- Error handling & logging
+  - Verify controllers and services use structured error handling, proper HTTP status codes, and ILogger for observability.
 
-5. **Write Tests** (`Project1.ChatApi.Tests/Services/`):
-```csharp
-[Fact]
-public async Task AnalyzeSentiment_PositiveMessage_ReturnPositive()
-{
-    var result = await _fixture.ChatService.AnalyzeSentimentAsync("Great day!");
-    Assert.Equal("positive", result);
-}
-```
+- Tests
+  - Review unit tests for deterministic logic (prompt composition, DTO mapping) and any integration tests that exercise real flows.
 
----
+- Security & secrets
+  - Ensure API keys and secrets are loaded from user-secrets or environment variables and not committed to source control.
 
-## 📊 Key Design Decisions
+- API surface & documentation
+  - Confirm Swagger/OpenAPI is enabled and that controllers use clear models and endpoints for predictable behavior.
 
-| Decision | Rationale |
-|----------|-----------|
-| **Clean Architecture** | Testable, maintainable, scales to Projects 2-7 |
-| **Dependency Inversion** | Depend on interfaces, not concrete classes |
-| **In-memory Storage** | Fast for learning (Projects 5+ will use SQL Server) |
-| **Semantic Kernel** | Unified API across Gemini, OpenAI, etc. |
-| **Static Dictionary** | Simple session management for Project 1 |
+- Observability & health
+  - Check for health checks, structured logging, and any telemetry hooks that help diagnose runtime issues.
+
+- Extensibility & provider-agnostic design
+  - Confirm that provider-specific logic sits behind interfaces so additional LLM providers can be added with minimal changes.
+
+- Performance considerations
+  - Review async usage, request timeouts for LLM calls, caching strategy, and any bulk/request batching logic.
+
+## Files and locations to inspect first
+
+To get up to speed quickly, open these files and folders in this order:
+
+1. Project1.ChatApi/Program.cs — startup, DI registrations, and middleware
+2. Project1.ChatApi/Presentation/Controllers — API endpoints (ChatController, EmailController)
+3. Project1.ChatApi/Features/Email/Services/SemanticKernelEmailService.cs — core prompt orchestration and LLM calls
+4. Project1.ChatApi/Infrastructure/AI — Semantic Kernel and provider integrations
+5. Project1.ChatApi/Domain — entities and value objects (ChatMessage, EmailDraft)
+6. Project1.ChatApi/Tests — unit and integration tests
+7. appsettings.json and appsettings.Development.json — configuration and local overrides
+
+These files give a clear picture of how requests flow through the system, where prompts are composed, and how external providers are invoked.
+
+If the above areas are implemented cleanly, the project is well-structured, easy to extend, and straightforward to run locally.
 
 ---
 
-## ⚠️ Limitations & Future Improvements
+## SemanticKernelEmailService (notes for maintainers)
 
-### Current Limitations
-
-1. **In-memory Storage** - Data lost when app restarts
-   - Solution: Add SQL Server persistence (Project 5)
-
-2. **Single-instance** - Doesn't scale across multiple servers
-   - Solution: Move to distributed cache (Redis) + SQL Server
-
-3. **No Authentication** - Anyone can call the API
-   - Solution: Add JWT authentication (future project)
-
-4. **No Rate Limiting** - No protection against abuse
-   - Solution: Add API rate limiting middleware
+- Purpose: Compose context-aware email subject and body using prompt templates and Semantic Kernel orchestration.
+- Responsibilities:
+  - Build prompt templates and context
+  - Call the configured LLM provider through a configured client
+  - Return structured results (subject, body, metadata)
+- Recommendations:
+  - Keep templates in configuration or resource files
+  - Add unit tests for prompt generation and deterministic logic
+  - Isolate provider-specific code behind interfaces so providers can be swapped easily
 
 ---
 
-## 🐛 Troubleshooting
+## Development guidelines
 
-### Issue: "API key not configured"
-
-**Error Message:**
-```
-Google Gemini API key is not configured. Please add 'GoogleAI:ApiKey' to your User Secrets or appsettings.json
-```
-
-**Solution:**
-```bash
-dotnet user-secrets set "GoogleAI:ApiKey" "your-key"
-```
+- Follow existing folder and naming conventions used by Project1.ChatApi
+- Add unit tests for any non-trivial logic
+- Keep secrets out of source control; use user-secrets or env vars for keys
+- Use small, focused commits with clear messages
 
 ---
 
-### Issue: "Model not found"
+## Contributing
 
-**Error Message:**
-```
-models/gemini-1.5-flash is not found for API version v1beta
-```
-
-**Solution:** Try these models in order:
-- `gemini-3.5-flash` (fastest, recommended)
-- `gemini-2.0-flash`
-- `gemini-1.5-pro`
-
-Update in `SemanticKernelConfiguration.cs`:
-```csharp
-modelId: "gemini-3.5-flash"
-```
+1. Fork the repository
+2. Create a branch for your feature/bugfix
+3. Add tests for new behavior
+4. Open a Pull Request with a clear description of changes
 
 ---
 
-### Issue: "Quota exceeded"
+## License
 
-**Error Message:**
-```
-Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests
-```
-
-**Solutions:**
-1. Wait until tomorrow (free tier resets daily)
-2. Enable billing on [Google Cloud Console](https://console.cloud.google.com)
-3. Use a different API key
+Add a LICENSE file to explicitly state the repository license. If you are not sure, consider MIT or Apache-2.0 for permissive licensing.
 
 ---
 
-### Issue: "Response truncated"
+## Need help?
 
-If responses are cut short, the issue is usually token limits. Ensure `SemanticKernelConfiguration.cs` doesn't limit output tokens too aggressively.
-
----
-
-## 📖 Learning Resources
-
-- **Semantic Kernel** - [Official Docs](https://learn.microsoft.com/en-us/semantic-kernel/)
-- **Google Gemini API** - [Developer Guide](https://ai.google.dev/docs)
-- **Clean Architecture** - [Uncle Bob's Article](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
-- **SOLID Principles** - [Wikipedia](https://en.wikipedia.org/wiki/SOLID)
-- **ASP.NET Core** - [Microsoft Docs](https://learn.microsoft.com/en-us/aspnet/core)
-
----
-
-## 🗺️ Project Roadmap
-
-- ✅ **Project 1:** AI Chat API (You are here)
-- 🔜 **Project 2:** AI Email Generator
-- 🔜 **Project 3:** SQL Assistant
-- 🔜 **Project 4:** Code Reviewer
-- 🔜 **Project 5:** Resume Analyzer
-- 🔜 **Project 6:** AI Agent
-- 🔜 **Project 7:** Chat with PDF using RAG
-
-Each project builds on the architecture and patterns learned in Project 1.
-
----
-
-## 📄 License
-
-MIT License - See LICENSE file
-
----
-
-## 🤝 Contributing
-
-This is a learning project. Contributions and suggestions welcome!
-
----
-
-**Built with ❤️ for AI Engineering Learning**
+Open an issue in the repository describing the problem, desired change, or question.
