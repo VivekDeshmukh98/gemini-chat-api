@@ -1,4 +1,4 @@
-﻿namespace Project1.ChatApi.Features.Dtos
+﻿namespace Project1.ChatApi.Features.Chat.Dtos
 {
     /// <summary>
     /// Chat history response.
